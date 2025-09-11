@@ -196,6 +196,9 @@ function showWord(word, range, clientX, clientY) {
     overlay.style.transform = `translateX(-50%) scale(${scale})`;
   });
 
+  // Store scale for later cursor-follow updates
+  overlay.dataset.scale = String(scale);
+
   if (hideTimer) clearTimeout(hideTimer);
   hideTimer = setTimeout(() => hideOverlay(), settings.zoomDurationMs || 2500);
 
@@ -304,6 +307,38 @@ function handleAutoHover(e) {
 }
 
 document.addEventListener('mousemove', handleAutoHover, true);
+
+// --- Cursor follow for hold-based activation ---
+function updateOverlayPosition(x, y) {
+  if (!overlayEl || overlayEl.style.opacity === '0') return;
+  // Keep centered below pointer
+  overlayEl.style.left = x + 'px';
+  overlayEl.style.top = (y + 18) + 'px';
+  // Clamp horizontally
+  const rect = overlayEl.getBoundingClientRect();
+  const vpW = window.innerWidth;
+  if (rect.left < 4) {
+    overlayEl.style.left = (rect.width / 2 + 4) + 'px';
+  } else if (rect.right > vpW - 4) {
+    overlayEl.style.left = (vpW - rect.width / 2 - 4) + 'px';
+  }
+}
+
+function handleFollowMove(e) {
+  // For button hold modes
+  if (settings.triggerButton !== 'auto') {
+    if (holdContext && holdContext.triggered) {
+      updateOverlayPosition(e.clientX, e.clientY);
+    }
+  } else {
+    // Auto mode: if triggered, follow as pointer moves within same word
+    if (holdContext && holdContext.triggered) {
+      updateOverlayPosition(e.clientX, e.clientY);
+    }
+  }
+}
+
+document.addEventListener('mousemove', handleFollowMove, true);
 document.addEventListener('keydown', onKeyDown, true);
 window.addEventListener('blur', hideOverlay);
 window.addEventListener('scroll', () => hideOverlay(), { passive: true });
