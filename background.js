@@ -19,7 +19,7 @@ const DEFAULT_SETTINGS = {
   enableBackground: true,
   enableFontOverride: true,
   cooldownMs: 4000, // prevent repeat triggers on same word quickly
-  triggerButton: 'middle', // 'left' | 'middle' | 'right'
+  triggerButton: 'middle', // 'left' | 'middle' | 'right' | 'auto' (auto = hover activation)
   holdDelayMs: 500 // time user must hold button before popup shows
 };
 

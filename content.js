@@ -233,10 +233,11 @@ function hideOverlay() {
 // ----- Event Handling -----
 
 function buttonMatches(e) {
+  if (settings.triggerButton === 'auto') return false; // auto mode ignores button presses
   switch (settings.triggerButton) {
     case 'left': return e.button === 0;
     case 'right': return e.button === 2;
-    case 'middle':
+    case 'middle': return e.button === 1;
     default: return e.button === 1;
   }
 }
@@ -287,6 +288,36 @@ function onKeyDown(e) {
 document.addEventListener('mousedown', onMouseDown, true);
 document.addEventListener('mouseup', onMouseUp, true);
 document.addEventListener('mouseleave', onMouseLeaveDoc, true);
+
+// --- Auto Hover Mode ---
+let lastHoverWord = null;
+function handleAutoHover(e) {
+  if (settings.triggerButton !== 'auto') return; // only act in auto mode
+  const wordInfo = getWordAtPoint(e.clientX, e.clientY);
+  if (!wordInfo || !wordInfo.word) {
+    if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+    lastHoverWord = null;
+    return;
+  }
+  // If moved to a different word, reset timer
+  if (wordInfo.word !== lastHoverWord) {
+    lastHoverWord = wordInfo.word;
+    if (holdTimer) clearTimeout(holdTimer);
+    holdContext = { word: wordInfo.word, range: wordInfo.range, clientX: e.clientX, clientY: e.clientY, triggered: false };
+    const delay = settings.holdDelayMs || 500;
+    holdTimer = setTimeout(() => {
+      if (!holdContext || holdContext.word !== lastHoverWord) return;
+      showWord(holdContext.word, holdContext.range, holdContext.clientX, holdContext.clientY);
+      holdContext.triggered = true;
+    }, delay);
+  } else if (holdContext && holdContext.triggered) {
+    // Update position gently if cursor moves slightly within same word
+    holdContext.clientX = e.clientX;
+    holdContext.clientY = e.clientY;
+  }
+}
+
+document.addEventListener('mousemove', handleAutoHover, true);
 document.addEventListener('keydown', onKeyDown, true);
 window.addEventListener('blur', hideOverlay);
 window.addEventListener('scroll', () => hideOverlay(), { passive: true });
