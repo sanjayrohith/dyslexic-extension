@@ -5,7 +5,7 @@ const form = document.getElementById('options-form');
 const statusEl = document.getElementById('status');
 
 const fields = [
-  'sensitivity','responseMode','zoomScale','zoomDurationMs','fontChoice','theme','enableTTS','enableBackground','enableFontOverride','cooldownMs'
+  'sensitivity','responseMode','zoomScale','zoomDurationMs','fontChoice','theme','enableTTS','enableBackground','enableFontOverride','cooldownMs','holdDelayMs'
 ];
 
 const triggerButtonEl = document.getElementById('triggerButton');
@@ -21,7 +21,9 @@ function load() {
         if (data[f] !== undefined) el.value = data[f];
       }
     });
-    triggerButtonEl.value = data.triggerButton || 'middle';
+  triggerButtonEl.value = data.triggerButton || 'middle';
+  const holdDelayEl = document.getElementById('holdDelayMs');
+  if (holdDelayEl) holdDelayEl.value = data.holdDelayMs !== undefined ? data.holdDelayMs : 500;
   });
 }
 

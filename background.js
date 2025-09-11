@@ -19,7 +19,8 @@ const DEFAULT_SETTINGS = {
   enableBackground: true,
   enableFontOverride: true,
   cooldownMs: 4000, // prevent repeat triggers on same word quickly
-  triggerButton: 'middle' // 'left' | 'middle' | 'right'
+  triggerButton: 'middle', // 'left' | 'middle' | 'right'
+  holdDelayMs: 500 // time user must hold button before popup shows
 };
 
 let currentSettings = { ...DEFAULT_SETTINGS };

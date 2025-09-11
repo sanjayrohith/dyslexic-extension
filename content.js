@@ -15,7 +15,8 @@ const DEFAULT_SETTINGS = {
   enableBackground: true,
   enableFontOverride: true,
   cooldownMs: 2000,
-  triggerButton: 'middle'
+  triggerButton: 'middle',
+  holdDelayMs: 500
 };
 
 let settings = { ...DEFAULT_SETTINGS };
@@ -23,6 +24,8 @@ let lastTriggerTime = 0;
 let lastWord = '';
 let overlayEl = null;
 let hideTimer = null;
+let holdTimer = null;
+let holdContext = null; // { word, range, clientX, clientY, triggered }
 
 // Request settings from background
 function loadSettings() {
@@ -240,16 +243,34 @@ function buttonMatches(e) {
 
 function onMouseDown(e) {
   if (!buttonMatches(e)) return;
+  if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
   const wordInfo = getWordAtPoint(e.clientX, e.clientY);
-  if (!wordInfo || !wordInfo.word) return;
-  // Suppress default action only if we triggered (avoid breaking normal usage)
-  e.preventDefault();
-  e.stopPropagation();
-  if (settings.triggerButton === 'right') {
-    // Prevent context menu for this click only
-    document.addEventListener('contextmenu', suppressOnce, true);
+  if (!wordInfo || !wordInfo.word) { holdContext = null; return; }
+  holdContext = { word: wordInfo.word, range: wordInfo.range, clientX: e.clientX, clientY: e.clientY, triggered: false };
+  const delay = settings.holdDelayMs || 500;
+  holdTimer = setTimeout(() => {
+    if (!holdContext) return;
+    // Prevent default actions (like middle auto-scroll or link open) only when activation actually fires
+    if (settings.triggerButton === 'right') document.addEventListener('contextmenu', suppressOnce, true);
+    showWord(holdContext.word, holdContext.range, holdContext.clientX, holdContext.clientY);
+    holdContext.triggered = true;
+  }, delay);
+}
+
+function onMouseUp(e) {
+  if (!buttonMatches(e)) return;
+  if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+  if (holdContext && holdContext.triggered) {
+    // Hide immediately on release (or keep until duration? choose immediate for responsiveness)
+    hideOverlay();
   }
-  showWord(wordInfo.word, wordInfo.range, e.clientX, e.clientY);
+  holdContext = null;
+}
+
+function onMouseLeaveDoc() {
+  if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+  holdContext = null;
+  hideOverlay();
 }
 
 function suppressOnce(ev) {
@@ -264,6 +285,8 @@ function onKeyDown(e) {
 }
 
 document.addEventListener('mousedown', onMouseDown, true);
+document.addEventListener('mouseup', onMouseUp, true);
+document.addEventListener('mouseleave', onMouseLeaveDoc, true);
 document.addEventListener('keydown', onKeyDown, true);
 window.addEventListener('blur', hideOverlay);
 window.addEventListener('scroll', () => hideOverlay(), { passive: true });
