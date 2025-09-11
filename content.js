@@ -166,48 +166,34 @@ function showWord(word, range, clientX, clientY) {
   // Force OpenDyslexic regardless of settings
   overlay.style.fontFamily = '"OpenDyslexic", "Arial", sans-serif';
 
-  // Scale
+  // Desired final scale
   const scale = settings.zoomScale || 2.0;
-  overlay.style.transform = `scale(${scale})`;
-  overlay.style.transformOrigin = 'left top';
+  overlay.style.transformOrigin = 'top center';
 
-  // Position: prefer above word if space; fallback below; slight offset from cursor
-  const rects = range.getClientRects();
-  let targetRect = rects[0];
-  if (!targetRect) {
-    targetRect = { left: clientX, top: clientY, width: 1, height: 1 };
-  }
-
-  // Initial position near cursor
-  let left = clientX + 12;
-  let top = clientY - 10;
-
-  // Keep inside viewport
-  const vpW = window.innerWidth;
-  const vpH = window.innerHeight;
+  // Prepare for measurement & animation
   overlay.style.visibility = 'hidden';
   overlay.style.opacity = '0';
-  overlay.style.left = '0px';
-  overlay.style.top = '0px';
-  overlay.style.maxWidth = '60vw';
   overlay.style.whiteSpace = 'nowrap';
   overlay.style.lineHeight = '1.2';
+  overlay.style.left = clientX + 'px';
+  overlay.style.top = (clientY + 18) + 'px'; // place below pointer with slight gap
+  overlay.style.transform = 'translateX(-50%) scale(0.85)';
 
-  // Force layout to measure
-  document.body.offsetHeight; // eslint-disable-line no-unused-expressions
-  const estWidth = overlay.offsetWidth * scale;
-  const estHeight = overlay.offsetHeight * scale;
+  // Force layout to ensure width available for potential clamping
+  void overlay.offsetWidth; // reflow
 
-  if (left + estWidth > vpW - 8) left = vpW - estWidth - 8;
-  if (top + estHeight > vpH - 8) top = vpH - estHeight - 8;
-  if (left < 4) left = 4;
-  if (top < 4) top = 4;
-
-  overlay.style.left = `${left}px`;
-  overlay.style.top = `${top}px`;
+  const vpW = window.innerWidth;
+  const rect = overlay.getBoundingClientRect();
+  // Clamp horizontally if off-screen when centered
+  if (rect.left < 4) {
+    overlay.style.left = (rect.width / 2 + 4) + 'px';
+  } else if (rect.right > vpW - 4) {
+    overlay.style.left = (vpW - rect.width / 2 - 4) + 'px';
+  }
   overlay.style.visibility = 'visible';
   requestAnimationFrame(() => {
     overlay.style.opacity = '1';
+    overlay.style.transform = `translateX(-50%) scale(${scale})`;
   });
 
   if (hideTimer) clearTimeout(hideTimer);

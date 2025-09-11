@@ -28,7 +28,7 @@
   font-weight: 600;
   line-height: 1.1;
   box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-  transition: opacity 220ms ease, transform 160ms ease;
+  transition: opacity 180ms ease-out, transform 220ms cubic-bezier(.16,.84,.44,1);
   opacity: 0;
   background: #222;
   color: #fff;
