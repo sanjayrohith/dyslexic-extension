@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guardian Reader – Options</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 16px; }
+    fieldset { margin-bottom: 18px; }
+    .row { margin: 6px 0; }
+    label { display: block; font-weight: 600; }
+    input[type=number] { width: 90px; }
+    #status { margin-top: 8px; font-size: 0.9em; color: #0a6; }
+  </style>
+</head>
+<body>
+  <h1>Guardian Reader Settings</h1>
+  <form id="options-form">
+    <fieldset>
+      <legend>Detection</legend>
+      <div class="row">
+        <label for="sensitivity">Sensitivity (0.5 more sensitive – 1.5 less)</label>
+        <input type="number" step="0.1" id="sensitivity" min="0.3" max="2" />
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Response</legend>
+      <div class="row">
+        <label for="responseMode">Mode</label>
+        <select id="responseMode">
+          <option value="zoom">Zoom Only</option>
+          <option value="zoom_bg">Zoom + Background</option>
+          <option value="zoom_bg_tts">Zoom + Background + TTS</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="zoomScale">Zoom Scale</label>
+        <input type="number" step="0.1" id="zoomScale" min="1" max="5" />
+      </div>
+      <div class="row">
+        <label for="zoomDurationMs">Zoom Duration (ms)</label>
+        <input type="number" id="zoomDurationMs" min="500" max="10000" />
+      </div>
+      <div class="row">
+        <label for="cooldownMs">Cooldown Between Triggers (ms)</label>
+        <input type="number" id="cooldownMs" min="500" max="10000" />
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Appearance</legend>
+      <div class="row">
+        <label for="fontChoice">Font</label>
+        <select id="fontChoice">
+          <option value="Default">Default</option>
+          <option value="OpenDyslexic">OpenDyslexic</option>
+          <option value="Verdana">Verdana</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="theme">Background Theme</label>
+        <select id="theme">
+          <option value="yellow_on_black">Yellow on Black</option>
+          <option value="black_on_white">Black on White</option>
+          <option value="sepia">Sepia</option>
+        </select>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Feature Toggles</legend>
+      <div class="row"><label><input type="checkbox" id="enableTTS" /> Enable Text-to-Speech</label></div>
+      <div class="row"><label><input type="checkbox" id="enableBackground" /> Enable Background Styling</label></div>
+      <div class="row"><label><input type="checkbox" id="enableFontOverride" /> Enable Font Override</label></div>
+    </fieldset>
+    <div class="field">
+      <label for="triggerButton">Activation Mouse Button</label>
+      <select id="triggerButton">
+        <option value="left">Left</option>
+        <option value="middle">Middle (default)</option>
+        <option value="right">Right</option>
+      </select>
+    </div>
+    <button type="submit">Save</button>
+    <span id="status" aria-live="polite"></span>
+  </form>
+  <p style="margin-top:24px;font-size:0.85em;line-height:1.4">Note: Gesture detection thresholds are experimental. You can adjust sensitivity if it triggers too often or not enough. OpenDyslexic font © its authors under the SIL Open Font License.</p>
+  <script src="options.js"></script>
+</body>
+</html>

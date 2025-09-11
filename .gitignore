@@ -1,0 +1,24 @@
+# General
+*.log
+*.tmp
+*.swp
+*.DS_Store
+
+# Node/yarn (if future tooling added)
+node_modules/
+dist/
+build/
+
+# Packaging artifacts
+*.zip
+*.xpi
+
+# Editor
+.vscode/
+*.code-workspace
+
+# OS
+Thumbs.db
+ehthumbs.db
+Icon?
+._*

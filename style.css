@@ -1,0 +1,42 @@
+/* Shared stylesheet for Guardian Reader content overlay & (optionally) options page tweaks */
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("fonts/OpenDyslexic-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* Map normal weight to the same resource if regular not present */
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("fonts/OpenDyslexic-Bold.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Ensure overlay always uses OpenDyslexic */
+#guardian-reader-overlay {
+  font-family: "OpenDyslexic", Arial, sans-serif !important;
+  position: fixed;
+  z-index: 2147483647; /* top */
+  pointer-events: none;
+  padding: 0.35em 0.6em;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  transition: opacity 220ms ease, transform 160ms ease;
+  opacity: 0;
+  background: #222;
+  color: #fff;
+  will-change: transform, opacity;
+  user-select: none;
+  max-width: 60vw;
+  text-align: center;
+}
+
+/* Options page potential overrides */
+body.guardian-reader-options h1 { font-family: 'OpenDyslexic', system-ui, sans-serif; }

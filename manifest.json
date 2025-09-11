@@ -1,0 +1,36 @@
+{
+  "manifest_version": 2,
+  "name": "Guardian Reader",
+  "version": "0.1.0",
+  "description": "Assist users with dyslexia, ADHD, and low vision by detecting reading struggle gestures and providing adaptive support (zoom, contrast, font, TTS).",
+  "author": "",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "browser_style": true,
+    "open_in_tab": false
+  },
+  "web_accessible_resources": [
+    "style.css",
+    "fonts/OpenDyslexic-Bold.woff2"
+  ],
+  "icons": {
+    "48": "icons/icon48.png",
+    "96": "icons/icon96.png"
+  }
+}
