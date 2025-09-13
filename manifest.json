@@ -1,13 +1,18 @@
 {
   "manifest_version": 2,
   "name": "Guardian Reader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Assist users with dyslexia, ADHD, and low vision by detecting reading struggle gestures and providing adaptive support (zoom, contrast, font, TTS).",
   "author": "",
   "permissions": [
-    "storage",
-    "activeTab"
+    "storage"
   ],
+  "applications": {
+    "gecko": {
+      "id": "guardian-reader@sanjayrohith.github",
+      "strict_min_version": "109.0"
+    }
+  },
   "background": {
     "scripts": ["background.js"],
     "persistent": false
